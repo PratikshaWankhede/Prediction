@@ -1,10 +1,8 @@
 version: '3.8'
 services:
   app:
-    build: .
+    image: pratikshawankhede/churnprediction:latest   # image Jenkins pushes
     ports:
       - "8501:8501"
     restart: always
-    volumes:
-      - ./:/app   # optional for dev; remove in prod for immutable deployment
 
