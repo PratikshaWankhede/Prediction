@@ -4,10 +4,10 @@ pipeline {
     environment {
         DOCKER_IMAGE = "pratikshawankhede/churnprediction_app"
         DOCKERHUB_CREDENTIALS = "dockerhub-creds"
-        DEPLOY_DIR = "/home/ubuntu/ChurnPrediction"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -42,15 +42,15 @@ pipeline {
 
         stage('Deploy with Docker Compose') {
             steps {
-                dir(DEPLOY_DIR) {
-                    sh '''
-                      docker-compose pull app || docker compose pull app
-                      docker-compose down app || docker compose down
-                      docker-compose up -d app || docker compose up -d app
-                    '''
-                }
+                // Run in Jenkins workspace (where docker-compose.yml is)
+                sh '''
+                  docker-compose pull app || docker compose pull app
+                  docker-compose down app || docker compose down
+                  docker-compose up -d app || docker compose up -d app
+                '''
             }
         }
     }
 }
+
 
