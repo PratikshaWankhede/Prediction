@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "pratikshawankhede/churnprediction_app"
-        TAG = "latest"
+        IMAGE_TAG  = "latest"
     }
 
     stages {
@@ -16,31 +16,35 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh '''
-                  docker build -t $IMAGE_NAME:$TAG .
-                '''
+                sh """
+                  docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                """
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([string(credentialsId: 'dockerhub-creds', variable: 'DOCKER_PASS')]) {
-                    sh '''
-                      echo "$DOCKER_PASS" | docker login -u pratikshawankhede --password-stdin
-                      docker push $IMAGE_NAME:$TAG
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh """
+                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                      docker push ${IMAGE_NAME}:${IMAGE_TAG}
                       docker logout
-                    '''
+                    """
                 }
             }
         }
 
         stage('Deploy with Docker Compose') {
             steps {
-                sh '''
+                sh """
                   docker-compose down || true
                   docker-compose pull
                   docker-compose up -d
-                '''
+                """
             }
         }
     }
