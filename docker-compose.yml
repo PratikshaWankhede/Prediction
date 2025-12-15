@@ -1,7 +1,9 @@
-version: '3.8'
+version: "3.8"
+
 services:
   app:
-    image: pratikshawankhede/churnprediction:latest   # image Jenkins pushes
+    image: pratikshawankhede/churnprediction_app:latest
+    container_name: churnprediction_app
     ports:
       - "8501:8501"
     restart: always
